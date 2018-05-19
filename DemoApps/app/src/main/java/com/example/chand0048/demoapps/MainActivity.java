@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .setAction("Action", null).show();
             }
         });
-
+        //Test Commit
         randomResult = findViewById(R.id.randomResult);
         randomButton = findViewById(R.id.randomBtn);
         randNum = new Random();
