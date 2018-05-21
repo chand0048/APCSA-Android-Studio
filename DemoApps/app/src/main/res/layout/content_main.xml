@@ -13,6 +13,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="824dp"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="-1dp">
@@ -21,13 +22,12 @@
             android:id="@+id/randomResult"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="175dp"
             android:gravity="center"
-            android:text="RandomNum"
+            android:text="Random Number"
             android:textColor="#e9700d"
             android:textSize="36sp"
             android:textStyle="bold"
-            app:fontFamily="casual"
+            app:fontFamily="monospace"
             tools:layout_editor_absoluteX="215dp"
             tools:layout_editor_absoluteY="115dp" />
 
@@ -35,7 +35,6 @@
             android:id="@+id/randomBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="200dp"
             android:backgroundTint="#e9700d"
             android:onClick="getRandom"
             android:text="GET RANDOM"
@@ -43,6 +42,23 @@
             android:textStyle="italic"
             tools:layout_editor_absoluteX="215dp"
             tools:layout_editor_absoluteY="515dp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+
+        <TextView
+            android:id="@+id/scoreResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Button Score"
+            android:textColor="#e9700d"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            app:fontFamily="monospace"
+            tools:layout_editor_absoluteX="215dp"
+            tools:layout_editor_absoluteY="115dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -79,6 +95,40 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/gameLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Touch the RED Button to earn a point.\nIf you press the wrong button, the game will reset."
+            android:textSize = "24dp"
+            android:textStyle="italic"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+
+        <TextView
+            android:id="@+id/passwordResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Random Password"
+            android:textColor="#e9700d"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            app:fontFamily="monospace"
+            tools:layout_editor_absoluteX="215dp"
+            tools:layout_editor_absoluteY="115dp" />
+
+        <Button
+            android:id="@+id/generatePasswordBtn"
+            android:layout_width="200dp"
+            android:layout_height="100dp"
+            android:text="GENERATE PASSWORD"
+            android:textSize="18dp"
+            android:onClick="generateRandomPassword"/>
     </LinearLayout>
 
 
