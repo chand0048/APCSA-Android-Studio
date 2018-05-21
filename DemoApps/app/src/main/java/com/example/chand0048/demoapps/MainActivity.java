@@ -19,9 +19,10 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    TextView randomResult;
-    Button randomButton;
+    TextView randomResult, scoreResult, passwordResult;
+    Button randomButton, generatePasswordButton;
     Random randNum;
+    int score;
 
     List<Button> buttonList;
 
@@ -45,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         randomButton = findViewById(R.id.randomBtn);
         randNum = new Random();
 
+        score = 0;
+        scoreResult = findViewById(R.id.scoreResult);
         buttonList = new ArrayList<Button>();
 
         buttonList.add((Button) findViewById(R.id.btn1));
@@ -57,6 +60,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             btn.setOnClickListener(this);
             btn.setBackgroundColor(Color.WHITE);
         }
+
+        passwordResult = findViewById(R.id.passwordResult);
+        generatePasswordButton = findViewById(R.id.generatePasswordBtn);
 
         changeButtonColor();
 
@@ -76,6 +82,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int randint = randNum.nextInt(4);
         buttonList.get(randint).setBackgroundColor(Color.RED);
     }
+
+    public void generateRandomPassword(View view)
+    {
+        String password = "";
+        for (int num = 0; num < 8; num++)
+        {
+            password += (char) (randNum.nextInt(89) + 33);
+        }
+
+        passwordResult.setText(password);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -99,7 +117,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
     public void onClick(View v)
     {
         switch(v.getId())
@@ -108,6 +125,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (v.getBackground().equals(Color.RED))
                 {
                     v.setBackgroundColor(Color.WHITE);
+                    score++;
+                    scoreResult.setText(score);
+                    changeButtonColor();
+                }
+                else
+                {
+                    v.setBackgroundColor(Color.WHITE);
+                    score = 0;
+                    scoreResult.setText(score);
                     changeButtonColor();
                 }
                 break;
@@ -116,6 +142,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (v.getBackground().equals(Color.RED))
                 {
                     v.setBackgroundColor(Color.WHITE);
+                    score++;
+                    scoreResult.setText(score);
+                    changeButtonColor();
+                }
+                else
+                {
+                    v.setBackgroundColor(Color.WHITE);
+                    score = 0;
+                    scoreResult.setText(score);
                     changeButtonColor();
                 }
                 break;
@@ -124,6 +159,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (v.getBackground().equals(Color.RED))
                 {
                     v.setBackgroundColor(Color.WHITE);
+                    score++;
+                    scoreResult.setText(score);
+                    changeButtonColor();
+                }
+                else
+                {
+                    v.setBackgroundColor(Color.WHITE);
+                    score = 0;
+                    scoreResult.setText(score);
                     changeButtonColor();
                 }
                 break;
@@ -132,6 +176,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (v.getBackground().equals(Color.RED))
                 {
                     v.setBackgroundColor(Color.WHITE);
+                    score++;
+                    scoreResult.setText(score);
+                    changeButtonColor();
+                }
+                else
+                {
+                    v.setBackgroundColor(Color.WHITE);
+                    score = 0;
+                    scoreResult.setText(score);
                     changeButtonColor();
                 }
                 break;
