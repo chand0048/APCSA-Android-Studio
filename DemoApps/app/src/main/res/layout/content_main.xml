@@ -16,7 +16,8 @@
         android:gravity="center_horizontal"
         android:orientation="vertical"
         tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="-1dp">
+        tools:layout_editor_absoluteY="-1dp"
+        tools:ignore="MissingConstraints">
 
         <TextView
             android:id="@+id/randomResult"
@@ -69,13 +70,15 @@
                 android:id="@+id/btn1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:onClick="testBtn1"/>
 
             <Button
                 android:id="@+id/btn2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:onClick="testBtn2"/>
         </LinearLayout>
 
         <LinearLayout
@@ -87,13 +90,15 @@
                 android:id="@+id/btn3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:onClick="testBtn3"/>
 
             <Button
                 android:id="@+id/btn4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:onClick="testBtn4"/>
         </LinearLayout>
 
         <TextView

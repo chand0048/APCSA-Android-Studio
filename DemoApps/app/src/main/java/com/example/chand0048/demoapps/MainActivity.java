@@ -12,12 +12,12 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Button;
 import android.widget.Toast;
-import android.graphics.Color;
+
 import java.util.Random;
 import java.util.List;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity{
 
     TextView randomResult, scoreResult, passwordResult;
     Button randomButton, generatePasswordButton;
@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int score;
 
     List<Button> buttonList;
+    List<Integer> buttonColorList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,21 +34,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        //Test Commit
+
         randomResult = findViewById(R.id.randomResult);
         randomButton = findViewById(R.id.randomBtn);
         randNum = new Random();
 
         score = 0;
         scoreResult = findViewById(R.id.scoreResult);
+
         buttonList = new ArrayList<Button>();
 
         buttonList.add((Button) findViewById(R.id.btn1));
@@ -57,9 +51,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         for (Button btn: buttonList)
         {
-            btn.setOnClickListener(this);
             btn.setBackgroundColor(Color.WHITE);
         }
+
+        buttonColorList = new ArrayList<Integer>();
+
+        buttonColorList.add(Color.WHITE);
+        buttonColorList.add(Color.WHITE);
+        buttonColorList.add(Color.WHITE);
+        buttonColorList.add(Color.WHITE);
+
 
         passwordResult = findViewById(R.id.passwordResult);
         generatePasswordButton = findViewById(R.id.generatePasswordBtn);
@@ -77,12 +78,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         randomResult.setText("" + num);
     }
 
-    public void changeButtonColor()
-    {
-        int randint = randNum.nextInt(4);
-        buttonList.get(randint).setBackgroundColor(Color.RED);
-    }
-
     public void generateRandomPassword(View view)
     {
         String password = "";
@@ -94,6 +89,109 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         passwordResult.setText(password);
     }
 
+    public void changeButtonColor()
+    {
+        int randint = randNum.nextInt(4);
+        buttonList.get(randint).setBackgroundColor(Color.RED);
+        buttonColorList.set(randint, Color.RED);
+        scoreResult.setText("" + score);
+    }
+
+    public void testBtn1(View view)
+    {
+        if (buttonColorList.get(0).equals(Color.RED))
+        {
+            buttonList.get(0).setBackgroundColor(Color.WHITE);
+            buttonColorList.set(0, Color.WHITE);
+            score++;
+        }
+        else
+        {
+            for (Button btn: buttonList)
+            {
+                btn.setBackgroundColor(Color.WHITE);
+            }
+            for (Integer color: buttonColorList)
+            {
+                color = Color.WHITE;
+            }
+            score = 0;
+        }
+        scoreResult.setText("" + score);
+        changeButtonColor();
+    }
+    public void testBtn2(View view)
+    {
+        if (buttonColorList.get(1).equals(Color.RED))
+        {
+            buttonList.get(1).setBackgroundColor(Color.WHITE);
+            buttonColorList.set(1, Color.WHITE);
+            score++;
+        }
+        else
+        {
+
+            for (Button btn: buttonList)
+            {
+                btn.setBackgroundColor(Color.WHITE);
+            }
+            for (Integer color: buttonColorList)
+            {
+                color = Color.WHITE;
+            }
+            score = 0;
+        }
+        scoreResult.setText("" + score);
+        changeButtonColor();
+    }
+    public void testBtn3(View view)
+    {
+        if (buttonColorList.get(2).equals(Color.RED))
+        {
+            buttonList.get(2).setBackgroundColor(Color.WHITE);
+            buttonColorList.set(2, Color.WHITE);
+            score++;
+        }
+        else
+        {
+
+            for (Button btn: buttonList)
+            {
+                btn.setBackgroundColor(Color.WHITE);
+            }
+            for (Integer color: buttonColorList)
+            {
+                color = Color.WHITE;
+            }
+            score = 0;
+        }
+        scoreResult.setText("" + score);
+        changeButtonColor();
+    }
+    public void testBtn4(View view)
+    {
+        if (buttonColorList.get(3).equals(Color.RED))
+        {
+            buttonList.get(3).setBackgroundColor(Color.WHITE);
+            buttonColorList.set(3, Color.WHITE);
+            score++;
+        }
+        else
+        {
+
+            for (Button btn: buttonList)
+            {
+                btn.setBackgroundColor(Color.WHITE);
+            }
+            for (Integer color: buttonColorList)
+            {
+                color = Color.WHITE;
+            }
+            score = 0;
+        }
+        scoreResult.setText("" + score);
+        changeButtonColor();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -115,79 +213,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void onClick(View v)
-    {
-        switch(v.getId())
-        {
-            case R.id.btn1:
-                if (v.getBackground().equals(Color.RED))
-                {
-                    v.setBackgroundColor(Color.WHITE);
-                    score++;
-                    scoreResult.setText(score);
-                    changeButtonColor();
-                }
-                else
-                {
-                    v.setBackgroundColor(Color.WHITE);
-                    score = 0;
-                    scoreResult.setText(score);
-                    changeButtonColor();
-                }
-                break;
-
-            case R.id.btn2:
-                if (v.getBackground().equals(Color.RED))
-                {
-                    v.setBackgroundColor(Color.WHITE);
-                    score++;
-                    scoreResult.setText(score);
-                    changeButtonColor();
-                }
-                else
-                {
-                    v.setBackgroundColor(Color.WHITE);
-                    score = 0;
-                    scoreResult.setText(score);
-                    changeButtonColor();
-                }
-                break;
-
-            case R.id.btn3:
-                if (v.getBackground().equals(Color.RED))
-                {
-                    v.setBackgroundColor(Color.WHITE);
-                    score++;
-                    scoreResult.setText(score);
-                    changeButtonColor();
-                }
-                else
-                {
-                    v.setBackgroundColor(Color.WHITE);
-                    score = 0;
-                    scoreResult.setText(score);
-                    changeButtonColor();
-                }
-                break;
-
-            case R.id.btn4:
-                if (v.getBackground().equals(Color.RED))
-                {
-                    v.setBackgroundColor(Color.WHITE);
-                    score++;
-                    scoreResult.setText(score);
-                    changeButtonColor();
-                }
-                else
-                {
-                    v.setBackgroundColor(Color.WHITE);
-                    score = 0;
-                    scoreResult.setText(score);
-                    changeButtonColor();
-                }
-                break;
-        }
     }
 }
