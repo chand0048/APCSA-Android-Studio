@@ -81,9 +81,21 @@ public class MainActivity extends AppCompatActivity{
     public void generateRandomPassword(View view)
     {
         String password = "";
-        for (int num = 0; num < 8; num++)
+        boolean containsSpecial = false;
+
+        while (containsSpecial == false)
         {
-            password += (char) (randNum.nextInt(89) + 33);
+            password = "";
+
+            for (int num = 0; num < 8; num++)
+            {
+                char c = (char) (randNum.nextInt(89) + 33);
+                if (c >= 33 && c <= 47)
+                {
+                    containsSpecial = true;
+                }
+                password += c;
+            }
         }
 
         passwordResult.setText(password);
