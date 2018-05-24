@@ -15,6 +15,8 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    private com.google.android.gms.common.api.GoogleApiClient mGoogleApiClient;
+    private static final int REQUEST_PLACE_PICKER = 1;
     private GoogleMap mMap;
     private LatLngBounds.Builder mBounds = new LatLngBounds.Builder();
 
@@ -27,6 +29,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment)
                 getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        // Set up the API client for Places API
+        mGoogleApiClient = new com.google.android.gms.common.api.GoogleApiClient.Builder(this)
+        .addApi(com.google.android.gms.location.places.Places.GEO_DATA_API).build();
+        mGoogleApiClient.connect();
     }
 
     /**
@@ -63,5 +70,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mBounds.include(newPoint);
         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(mBounds.build(),
                 findViewById(R.id.checkout_button).getHeight()));
+    }
+
+    /**
+    * Prompt the user to check out of their location. Called when the "Check Out!" button
+    * is clicked.
+    */
+    public void checkOut(android.view.View view) {
+        try {
+            com.google.android.gms.location.places.ui.PlacePicker.IntentBuilder intentBuilder = new com.google.android.gms.location.places.ui.PlacePicker.IntentBuilder();
+            android.content.Intent intent = intentBuilder.build(this);
+            startActivityForResult(intent, REQUEST_PLACE_PICKER);
+        } catch (com.google.android.gms.common.GooglePlayServicesRepairableException e) {
+            com.google.android.gms.common.GoogleApiAvailability.getInstance().getErrorDialog(this, e.getConnectionStatusCode(),
+               REQUEST_PLACE_PICKER);
+        } catch (com.google.android.gms.common.GooglePlayServicesNotAvailableException e) {
+            android.widget.Toast.makeText(this, "Please install Google Play Services!", android.widget.Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, android.content.Intent data) {
+        if (requestCode == REQUEST_PLACE_PICKER) {
+            if (resultCode == android.app.Activity.RESULT_OK) {
+                com.google.android.gms.location.places.Place place = com.google.android.gms.location.places.ui.PlacePicker.getPlace(data, this);
+            } else if (resultCode == com.google.android.gms.location.places.ui.PlacePicker.RESULT_ERROR) {
+                android.widget.Toast.makeText(this, "Places API failure! Check that the API is enabled for your key",
+                    android.widget.Toast.LENGTH_LONG).show();
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }
