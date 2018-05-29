@@ -37,7 +37,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private LatLngBounds.Builder mBounds = new LatLngBounds.Builder();
 
-    private static final String FIREBASE_URL = "https://firebase-adminsdk-zzs59@root-furnace-204804.iam.gserviceaccount.com";
+    private static final String FIREBASE_URL = "https://root-furnace-204804.firebaseio.com";
     private static final String FIREBASE_ROOT_NODE = "checkouts";
     private Firebase mFirebase;
 
