@@ -15,4 +15,8 @@
         android:id="@+id/mapTypeNone"
         android:title="@string/none" />
 
+    <item android:id="@+id/currentLocation"
+        android:title="@string/current_location"
+        android:onClick="showCurrentLocation"/>
+
 </menu>

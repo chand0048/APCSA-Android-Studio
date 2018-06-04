@@ -1,27 +1,33 @@
 package com.example.chand0048.maps;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import android.app.Dialog;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -29,20 +35,23 @@ import com.google.android.gms.maps.model.LatLng;
 import java.io.IOException;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     GoogleMap mMap;
 
     private static final int ERROR_REQUEST = 1001;
 
     private static final double
-            SANDIEGOLAT= 32.790176,
-            SANDIEGOLNG=  -117.171579,
-            DENVERLAT= 39.761857,
-            DENVERLNG=  -105.036050,
-            DCLAT= 38.974418,
-            DCLNG= -77.050888;
+            SANDIEGOLAT = 32.790176,
+            SANDIEGOLNG = -117.171579,
+            DENVERLAT = 39.761857,
+            DENVERLNG = -105.036050,
+            DCLAT = 38.974418;
 
+
+    private GoogleApiClient mLocationClient;
+    private LocationListener mListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +61,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (checkPlayServices()) {
             setContentView(R.layout.activity_map);
             initMap();
+            mLocationClient = new GoogleApiClient.Builder(this)
+                    .addApi(LocationServices.API)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+
+            mLocationClient.connect();
             Toast.makeText(this, "Ready to map!", Toast.LENGTH_SHORT).show();
         } else {
             setContentView(R.layout.activity_main);
@@ -81,16 +97,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         return false;
     }
 
-    private void initMap(){
+    private void initMap() {
 
-        if(mMap == null){
+        if (mMap == null) {
             SupportMapFragment mapFragment =
                     (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
             mapFragment.getMapAsync(this);
         }
     }
 
-    private void gotoLocation(double lat, double lng, float zoom){
+    private void gotoLocation(double lat, double lng, float zoom) {
         LatLng latLng = new LatLng(lat, lng);
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latLng, zoom);
         mMap.moveCamera(update);
@@ -99,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void hideSoftKeyboard(View v) {
         InputMethodManager imm =
-                (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
@@ -121,6 +137,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             double lat = add.getLatitude();
             double lng = add.getLongitude();
             gotoLocation(lat, lng, 15);
+        }
+
+    }
+
+    public void showCurrentLocation(MenuItem item) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        @SuppressLint("MissingPermission") Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(mLocationClient);
+        if (currentLocation == null) {
+            Toast.makeText(this, "Couldn't connect!", Toast.LENGTH_SHORT).show();
+        } else {
+            LatLng latLng = new LatLng(
+                    currentLocation.getLatitude(),
+                    currentLocation.getLongitude()
+            );
+            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(
+                    latLng, 15
+            );
+            mMap.animateCamera(update);
         }
 
     }
@@ -156,5 +199,57 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        mListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                Toast.makeText(MainActivity.this,
+                        "Location changed: " + location.getLatitude() + ", " +
+                                location.getLongitude(), Toast.LENGTH_SHORT).show();
+                gotoLocation(location.getLatitude(), location.getLongitude(), 15);
+            }
+        };
+
+        LocationRequest request = LocationRequest.create();
+        request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        request.setInterval(5000);
+        request.setFastestInterval(1000);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mLocationClient, request, mListener
+        );
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocationServices.FusedLocationApi.removeLocationUpdates(
+                mLocationClient, mListener
+        );
+    }
+
+
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 }
