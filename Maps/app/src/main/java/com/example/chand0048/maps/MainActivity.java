@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -23,14 +24,17 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
 import java.util.List;
@@ -39,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         GoogleApiClient.OnConnectionFailedListener {
 
     GoogleMap mMap;
+    Circle shape;
 
     private static final int ERROR_REQUEST = 1001;
 
@@ -106,6 +111,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    private void drawMarker(Location location) {
+        if (mMap != null) {
+            //mMap.clear();
+            LatLng gps = new LatLng(location.getLatitude(), location.getLongitude());
+            mMap.addMarker(new MarkerOptions()
+                    .position(gps)
+                    .title("Current Position"));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gps, 20));
+        }
+
+    }
+
     private void gotoLocation(double lat, double lng, float zoom) {
         LatLng latLng = new LatLng(lat, lng);
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latLng, zoom);
@@ -126,46 +143,62 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         TextView tv = (TextView) findViewById(R.id.editText1);
         String searchString = tv.getText().toString();
 
-        Geocoder gc = new Geocoder(this);
-        List<Address> list = gc.getFromLocationName(searchString, 1);
+        if (searchString.length() != 0)
+        {
+            Geocoder gc = new Geocoder(this);
+            List<Address> list = gc.getFromLocationName(searchString, 1);
 
-        if (list.size() > 0) {
-            Address add = list.get(0);
-            String locality = add.getLocality();
-            Toast.makeText(this, "Found: " + locality, Toast.LENGTH_SHORT).show();
+            if (list.size() > 0) {
+                Address add = list.get(0);
+                String locality = add.getLocality();
+                Toast.makeText(this, "Found: " + locality, Toast.LENGTH_SHORT).show();
 
-            double lat = add.getLatitude();
-            double lng = add.getLongitude();
-            gotoLocation(lat, lng, 15);
+                double lat = add.getLatitude();
+                double lng = add.getLongitude();
+                gotoLocation(lat, lng, 15);
+
+                MarkerOptions options = new MarkerOptions()
+                        .title(locality)
+                        .position(new LatLng(lat, lng));
+                mMap.addMarker(options);
+            }
         }
+
 
     }
 
     public void showCurrentLocation(MenuItem item) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        @SuppressLint("MissingPermission") Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(mLocationClient);
-        if (currentLocation == null) {
-            Toast.makeText(this, "Couldn't connect!", Toast.LENGTH_SHORT).show();
-        } else {
-            LatLng latLng = new LatLng(
-                    currentLocation.getLatitude(),
-                    currentLocation.getLongitude()
-            );
-            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(
-                    latLng, 15
-            );
-            mMap.animateCamera(update);
-        }
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            return;
+        } else {
+            // Write you code here if permission already given.
+            Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(mLocationClient);
+            if (currentLocation == null) {
+                Toast.makeText(this, "Couldn't connect!", Toast.LENGTH_SHORT).show();
+            } else {
+                LatLng latLng = new LatLng(
+                        currentLocation.getLatitude(),
+                        currentLocation.getLongitude()
+                );
+                CameraUpdate update = CameraUpdateFactory.newLatLngZoom(
+                        latLng, 15
+                );
+                //mMap.animateCamera(update);
+                drawMarker(currentLocation);
+
+                CircleOptions circleOptions = new CircleOptions()
+                        .strokeWidth(3)
+                        .fillColor(0x330000FF)
+                        .strokeColor(Color.BLUE)
+                        .center(latLng)
+                        .radius(5);
+                shape = mMap.addCircle(circleOptions);
+
+            }
+
+        }
     }
 
     @Override
@@ -211,12 +244,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         "Location changed: " + location.getLatitude() + ", " +
                                 location.getLongitude(), Toast.LENGTH_SHORT).show();
                 gotoLocation(location.getLatitude(), location.getLongitude(), 15);
+                Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(mLocationClient);
+                drawMarker(currentLocation);
             }
         };
 
         LocationRequest request = LocationRequest.create();
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        request.setInterval(5000);
+        request.setInterval(2000);
         request.setFastestInterval(1000);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -228,9 +263,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        LocationServices.FusedLocationApi.requestLocationUpdates(
-                mLocationClient, request, mListener
-        );
+       LocationServices.FusedLocationApi.requestLocationUpdates(
+                mLocationClient, request, mListener);
     }
 
     @Override
