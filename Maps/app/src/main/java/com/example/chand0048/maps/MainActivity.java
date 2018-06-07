@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void drawMarker(Location location) {
         if (mMap != null) {
-            //mMap.clear();
+            mMap.clear();
             LatLng gps = new LatLng(location.getLatitude(), location.getLongitude());
             mMap.addMarker(new MarkerOptions()
                     .position(gps)
@@ -243,16 +243,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Toast.makeText(MainActivity.this,
                         "Location changed: " + location.getLatitude() + ", " +
                                 location.getLongitude(), Toast.LENGTH_SHORT).show();
-                gotoLocation(location.getLatitude(), location.getLongitude(), 15);
+                gotoLocation(location.getLatitude(), location.getLongitude(), 19);
                 Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(mLocationClient);
-                drawMarker(currentLocation);
+
+
+                LatLng latLng = new LatLng(
+                        currentLocation.getLatitude(),
+                        currentLocation.getLongitude());
+
+                CircleOptions circleOptions = new CircleOptions()
+                        .strokeWidth(2)
+                        .fillColor(Color.YELLOW)
+                        .strokeColor(Color.GREEN)
+                        .center(latLng)
+                        .radius(2);
+                shape = mMap.addCircle(circleOptions);
             }
         };
 
         LocationRequest request = LocationRequest.create();
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        request.setInterval(2000);
-        request.setFastestInterval(1000);
+        request.setInterval(300);
+        request.setFastestInterval(10);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -285,5 +297,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    public void clearMap(MenuItem item) {
+        mMap.clear();
     }
 }

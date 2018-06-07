@@ -10,4 +10,5 @@
     <string name="hybrid">hybrid</string>
     <string name="none">none</string>
     <string name="current_location">current_location</string>
+    <string name="clear_map">clear_map</string>
 </resources>
